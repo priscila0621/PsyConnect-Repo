@@ -34,6 +34,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,18 +95,18 @@ fun RegisterScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { 
+                title = {
                     Text(
-                        "Crear Cuenta", 
-                        fontWeight = FontWeight.Bold, 
-                        color = MaterialTheme.colorScheme.primary 
-                    ) 
+                        "Crear Cuenta",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack, 
-                            "Atrás", 
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            "Atrás",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -120,10 +122,12 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .imePadding()
+                .navigationBarsPadding()
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { Spacer(Modifier.height(8.dp)) }
+            item { Spacer(Modifier.height(32.dp)) }
 
             item {
                 RegisterTextField(
@@ -169,7 +173,7 @@ fun RegisterScreen(
                         if (!state.isEmailVerified && state.isEmailAvailable == true) {
                             TextButton(onClick = onSendCode, enabled = !state.isLoading && !state.isTimerActive) {
                                 Text(
-                                    if (state.isTimerActive) state.timerText else "Enviar", 
+                                    if (state.isTimerActive) state.timerText else "Enviar",
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -242,7 +246,7 @@ fun RegisterScreen(
                         trailingIcon = {
                             IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                                 Icon(
-                                    if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, 
+                                    if (isPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                                     null,
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -256,7 +260,7 @@ fun RegisterScreen(
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                         )
                     )
-                    
+
                     if (state.password.isNotEmpty()) {
                         PasswordRequirementsView(state.password)
                     }
@@ -274,7 +278,7 @@ fun RegisterScreen(
                         onCheckedChange = onTermsChange,
                         colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                     )
-                    
+
                     val annotatedString = buildAnnotatedString {
                         append("Acepto los ")
                         withLink(
@@ -320,7 +324,7 @@ fun RegisterScreen(
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary, 
+                            color = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(24.dp)
                         )
                     } else {

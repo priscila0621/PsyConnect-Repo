@@ -37,13 +37,19 @@ class Login : ComponentActivity() {
 
                             Toast.makeText(this@Login, state.message, Toast.LENGTH_SHORT).show()
                             
-                            // Verificar si es la primera vez que inicia sesión para completar perfil
-                            val hasCompletedProfile = sharedPreferences.getBoolean("profile_setup_${state.userId}", false)
+                            // Verificar si el perfil ya está completo según el servidor o localmente
+                            val hasCompletedProfileLocal = sharedPreferences.getBoolean("profile_setup_${state.userId}", false)
                             
-                            if (!hasCompletedProfile) {
-                                startActivity(Intent(this@Login, CompleteProfileActivity::class.java))
-                            } else {
+                            if (state.isProfileComplete || hasCompletedProfileLocal) {
+                                // Si el servidor confirma que está completo, actualizamos el estado local
+                                if (state.isProfileComplete && !hasCompletedProfileLocal) {
+                                    sharedPreferences.edit()
+                                        .putBoolean("profile_setup_${state.userId}", true)
+                                        .apply()
+                                }
                                 startActivity(Intent(this@Login, Home::class.java))
+                            } else {
+                                startActivity(Intent(this@Login, CompleteProfileActivity::class.java))
                             }
                             finish()
                         }
