@@ -1,5 +1,6 @@
 package ni.edu.uam.psyconnect.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ni.edu.uam.psyconnect.ui.viewmodel.ChangePasswordUiState
@@ -31,6 +33,7 @@ fun ChangePasswordScreen(
     onNewPasswordChange: (String) -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
     onSave: () -> Unit,
+    onForgotPassword: () -> Unit,
     onBack: () -> Unit
 ) {
     var isCurrentVisible by remember { mutableStateOf(false) }
@@ -88,36 +91,50 @@ fun ChangePasswordScreen(
                 Spacer(Modifier.height(24.dp))
 
                 // Contraseña Actual
-                OutlinedTextField(
-                    value = state.currentPassword,
-                    onValueChange = onCurrentPasswordChange,
-                    label = { Text("Contraseña Actual") },
-                    leadingIcon = { 
-                        Icon(
-                            Icons.Default.Lock, 
-                            null, 
-                            tint = MaterialTheme.colorScheme.primary
-                        ) 
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { isCurrentVisible = !isCurrentVisible }) {
+                Column {
+                    OutlinedTextField(
+                        value = state.currentPassword,
+                        onValueChange = onCurrentPasswordChange,
+                        label = { Text("Contraseña Actual") },
+                        leadingIcon = { 
                             Icon(
-                                if (isCurrentVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, 
-                                null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    },
-                    visualTransformation = if (isCurrentVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-                        focusedLabelColor = MaterialTheme.colorScheme.primary
-                    ),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-                )
+                                Icons.Default.Lock, 
+                                null, 
+                                tint = MaterialTheme.colorScheme.primary
+                            ) 
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = { isCurrentVisible = !isCurrentVisible }) {
+                                Icon(
+                                    if (isCurrentVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff, 
+                                    null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        },
+                        visualTransformation = if (isCurrentVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                            focusedLabelColor = MaterialTheme.colorScheme.primary
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+                    
+                    Text(
+                        text = "¿Olvidaste tu contraseña?",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(top = 8.dp)
+                            .clickable { onForgotPassword() }
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
 
@@ -153,7 +170,6 @@ fun ChangePasswordScreen(
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                     )
-                    // Assuming PasswordStrengthIndicator is a composable that might need fix too
                     PasswordStrengthIndicator(state.newPassword)
                 }
 

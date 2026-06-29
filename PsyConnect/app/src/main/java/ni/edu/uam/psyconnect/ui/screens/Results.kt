@@ -21,13 +21,12 @@ class Results : ComponentActivity() {
         
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
         val userId = sharedPreferences.getLong("userId", 1L)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
         val feedback = TestInterpreter.generate(category, percentage)
 
         viewModel.syncResultWithServer(userId, category, percentage, feedback.title)
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 ResultsScreen(
                     category = category,
                     percentage = percentage,

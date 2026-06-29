@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
+import ni.edu.uam.psyconnect.ui.theme.PsyConnectTheme
 import ni.edu.uam.psyconnect.ui.viewmodel.ChangeEmailViewModel
 
 class ChangeEmail : ComponentActivity() {
@@ -21,32 +22,34 @@ class ChangeEmail : ComponentActivity() {
             .getLong("userId", -1L)
 
         setContent {
-            val state by viewModel.uiState.collectAsState()
+            PsyConnectTheme {
+                val state by viewModel.uiState.collectAsState()
 
-            // Manejo de éxito
-            LaunchedEffect(state.isSuccess) {
-                if (state.isSuccess) {
-                    Toast.makeText(this@ChangeEmail, "Correo actualizado correctamente", Toast.LENGTH_SHORT).show()
-                    finish()
+                // Manejo de éxito
+                LaunchedEffect(state.isSuccess) {
+                    if (state.isSuccess) {
+                        Toast.makeText(this@ChangeEmail, "Correo actualizado correctamente", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
                 }
-            }
 
-            // Manejo de errores
-            LaunchedEffect(state.error) {
-                state.error?.let {
-                    Toast.makeText(this@ChangeEmail, it, Toast.LENGTH_LONG).show()
-                    viewModel.clearError()
+                // Manejo de errores
+                LaunchedEffect(state.error) {
+                    state.error?.let {
+                        Toast.makeText(this@ChangeEmail, it, Toast.LENGTH_LONG).show()
+                        viewModel.clearError()
+                    }
                 }
-            }
 
-            ChangeEmailScreen(
-                state = state,
-                onEmailChange = viewModel::onEmailChange,
-                onCodeChange = viewModel::onCodeChange,
-                onSendCode = viewModel::sendCode,
-                onVerify = { viewModel.verifyAndChangeEmail(userId) },
-                onBack = { finish() }
-            )
+                ChangeEmailScreen(
+                    state = state,
+                    onEmailChange = viewModel::onEmailChange,
+                    onCodeChange = viewModel::onCodeChange,
+                    onSendCode = viewModel::sendCode,
+                    onVerify = { viewModel.verifyAndChangeEmail(userId) },
+                    onBack = { finish() }
+                )
+            }
         }
     }
 }

@@ -2,8 +2,6 @@ package ni.edu.uam.psyconnect_backend.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "moods")
 public class Mood {
@@ -18,7 +16,15 @@ public class Mood {
 
     private String mood;
 
-    private LocalDate date;
+    private String date;
+
+    @Column(columnDefinition = "TEXT")
+    private String reflection;
+
+    private Long timestamp;
+
+    @Column(columnDefinition = "TEXT")
+    private String activities;
 
     public Mood() {
     }
@@ -27,12 +33,18 @@ public class Mood {
             Long id,
             Long userId,
             String mood,
-            LocalDate date
+            String date,
+            String reflection,
+            Long timestamp,
+            String activities
     ) {
         this.id = id;
         this.userId = userId;
         this.mood = mood;
         this.date = date;
+        this.reflection = reflection;
+        this.timestamp = timestamp;
+        this.activities = activities;
     }
 
     public Long getId() {
@@ -47,8 +59,24 @@ public class Mood {
         return mood;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
+    }
+
+    public String getReflection() {
+        return reflection;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getActivities() {
+        return activities;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setUserId(Long userId) {
@@ -59,7 +87,19 @@ public class Mood {
         this.mood = mood;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setReflection(String reflection) {
+        this.reflection = reflection;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setActivities(String activities) {
+        this.activities = activities;
     }
 }

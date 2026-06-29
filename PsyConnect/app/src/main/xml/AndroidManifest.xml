@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:usesCleartextTraffic="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PsyConnect">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"/>
+
+        <activity
+            android:name=".ui.screens.OnboardingActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.screens.Login" />
+        <activity android:name=".ui.screens.Register" />
+        <activity android:name=".ui.screens.Home" />
+        <activity android:name=".ui.screens.TestCategoryActivity" />
+        <activity android:name=".ui.screens.DynamicTestActivity" />
+        <activity android:name=".ui.screens.Results" />
+        <activity android:name=".ui.screens.History" />
+        <activity android:name=".ui.screens.Profile" />
+        <activity android:name=".ui.screens.EditProfile" />
+        <activity android:name=".ui.screens.ChangePassword" />
+        <activity android:name=".ui.screens.DetailPsychologist"/>
+        <activity android:name=".ui.screens.ResetPassword" />
+        <activity android:name=".ui.screens.ForgotPassword" />
+        <activity android:name=".ui.screens.SettingsActivity"/>
+        <activity android:name=".ui.screens.AppearanceActivity"/>
+        <activity android:name=".ui.screens.AboutActivity"/>
+        <activity android:name=".ui.screens.ChangeEmail" />
+        <activity android:name=".ui.screens.SecurityActivity" />
+        <activity android:name=".ui.screens.MoodHistoryActivity" />
+        <activity android:name=".ui.screens.AchievementsActivity" />
+        <activity android:name=".ui.screens.ResultDetailActivity"/>
+        <activity android:name=".ui.screens.MoodJournalActivity" />
+        <activity android:name=".ui.screens.CompleteProfileActivity" />
+    </application>
+
+</manifest>

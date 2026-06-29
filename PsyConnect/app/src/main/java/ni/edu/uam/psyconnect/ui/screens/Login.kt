@@ -22,10 +22,7 @@ class Login : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
 
         setContent {
-            // Punto 6: Escuchar modo oscuro
-            val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-            
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val loginState by viewModel.loginState.collectAsState()
 
                 LaunchedEffect(loginState) {
@@ -39,7 +36,21 @@ class Login : ComponentActivity() {
                                 .apply()
 
                             Toast.makeText(this@Login, state.message, Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@Login, Home::class.java))
+                            
+                            // Verificar si el perfil ya está completo según el servidor o localmente
+                            val hasCompletedProfileLocal = sharedPreferences.getBoolean("profile_setup_${state.userId}", false)
+                            
+                            if (state.isProfileComplete || hasCompletedProfileLocal) {
+                                // Si el servidor confirma que está completo, actualizamos el estado local
+                                if (state.isProfileComplete && !hasCompletedProfileLocal) {
+                                    sharedPreferences.edit()
+                                        .putBoolean("profile_setup_${state.userId}", true)
+                                        .apply()
+                                }
+                                startActivity(Intent(this@Login, Home::class.java))
+                            } else {
+                                startActivity(Intent(this@Login, CompleteProfileActivity::class.java))
+                            }
                             finish()
                         }
                         is LoginState.Error -> {

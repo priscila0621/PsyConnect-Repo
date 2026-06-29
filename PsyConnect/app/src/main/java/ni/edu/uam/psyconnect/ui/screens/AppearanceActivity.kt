@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.*
 import ni.edu.uam.psyconnect.ui.theme.PsyConnectTheme
+import ni.edu.uam.psyconnect.ui.theme.ThemeSettings
 
 class AppearanceActivity : ComponentActivity() {
 
@@ -15,20 +16,17 @@ class AppearanceActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
 
         setContent {
-            // Leemos el estado directamente de SharedPreferences para que sea reactivo tras la recreación
-            var isDarkMode by remember { 
-                mutableStateOf(sharedPreferences.getBoolean("darkMode", false)) 
-            }
-
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 AppearanceScreen(
-                    isDarkMode = isDarkMode,
+                    isDarkMode = ThemeSettings.isDarkMode,
                     onDarkModeChange = { checked ->
                         // 1. Guardar preferencia
                         sharedPreferences.edit().putBoolean("darkMode", checked).apply()
-                        isDarkMode = checked
+                        
+                        // 2. Actualizar estado global reactivo
+                        ThemeSettings.isDarkMode = checked
 
-                        // 2. Aplicar a nivel sistema (esto recreará la actividad automáticamente)
+                        // 3. Aplicar a nivel sistema para componentes legacy si existen
                         if (checked) {
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                         } else {

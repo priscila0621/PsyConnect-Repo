@@ -21,10 +21,22 @@ class LoginViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val authResponse = response.body()
                     if (authResponse != null && authResponse.success) {
+                        val userId = authResponse.userId ?: -1
+                        
+                        // Validar si el usuario ya tiene perfil completo (foto y descripción)
+                        val userResponse = RetrofitClient.apiService.getUserById(userId)
+                        val isProfileComplete = if (userResponse.isSuccessful) {
+                            val user = userResponse.body()
+                            !user?.profileImage.isNullOrEmpty() && !user?.description.isNullOrEmpty()
+                        } else {
+                            false
+                        }
+
                         _loginState.value = LoginState.Success(
-                            userId = authResponse.userId ?: -1,
+                            userId = userId,
                             message = authResponse.message ?: "Inicio de sesión exitoso",
-                            identifier = identifier
+                            identifier = identifier,
+                            isProfileComplete = isProfileComplete
                         )
                     } else {
                         _loginState.value = LoginState.Error(authResponse?.message ?: "Credenciales incorrectas")
@@ -46,6 +58,11 @@ class LoginViewModel : ViewModel() {
 sealed class LoginState {
     object Idle : LoginState()
     object Loading : LoginState()
-    data class Success(val userId: Long, val message: String, val identifier: String) : LoginState()
+    data class Success(
+        val userId: Long, 
+        val message: String, 
+        val identifier: String,
+        val isProfileComplete: Boolean = false
+    ) : LoginState()
     data class Error(val message: String) : LoginState()
 }

@@ -9,7 +9,7 @@ import ni.edu.uam.psyconnect.data.model.TestResultEntity
 
 @Database(
     entities = [MoodJournalEntry::class, TestResultEntity::class, AchievementEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class MoodJournalDatabase : RoomDatabase() {

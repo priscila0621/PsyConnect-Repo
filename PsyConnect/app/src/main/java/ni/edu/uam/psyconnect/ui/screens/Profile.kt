@@ -13,19 +13,19 @@ import ni.edu.uam.psyconnect.ui.viewmodel.ProfileViewModel
 
 class Profile : ComponentActivity() {
 
+    private lateinit var viewModel: ProfileViewModel
+    private var userId: Long = -1L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
+        viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val userId = sharedPreferences.getLong("userId", -1L)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-
-        viewModel.loadProfile(userId)
+        userId = sharedPreferences.getLong("userId", -1L)
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val user by viewModel.user.collectAsState()
                 val age by viewModel.age.collectAsState()
 
@@ -61,6 +61,14 @@ class Profile : ComponentActivity() {
                     }
                 )
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refrescar datos instantáneamente al volver a la pantalla
+        if (userId != -1L) {
+            viewModel.loadProfile(userId)
         }
     }
 }

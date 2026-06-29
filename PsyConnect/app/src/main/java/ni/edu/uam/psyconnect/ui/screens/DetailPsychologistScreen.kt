@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import ni.edu.uam.psyconnect.ui.components.Base64Image
 import ni.edu.uam.psyconnect.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,8 +79,8 @@ fun DetailPsychologistScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        AsyncImage(
-                            model = "http://10.0.2.2:8080/uploads/$photo",
+                        Base64Image(
+                            base64String = photo,
                             contentDescription = "Foto de $name",
                             modifier = Modifier
                                 .size(120.dp)

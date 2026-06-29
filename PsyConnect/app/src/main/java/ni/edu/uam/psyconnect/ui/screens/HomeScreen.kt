@@ -1,5 +1,6 @@
 package ni.edu.uam.psyconnect.ui.screens
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,11 +13,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +32,7 @@ import com.airbnb.lottie.compose.*
 import ni.edu.uam.psyconnect.data.model.WellnessItem
 import ni.edu.uam.psyconnect.R
 import ni.edu.uam.psyconnect.data.model.Psychologist
+import ni.edu.uam.psyconnect.ui.components.Base64Image
 import ni.edu.uam.psyconnect.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +47,8 @@ fun HomeScreen(
     onPsychologistClick: (Psychologist) -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToMoodJournal: () -> Unit
+    onNavigateToMoodJournal: () -> Unit,
+    onNavigateToBreathing: () -> Unit
 ) {
     val wellnessItems = listOf(
         WellnessItem("Bienestar emocional", "Evalúa tu equilibrio emocional general.", R.raw.wellbeing, "WELLNESS"),
@@ -53,9 +58,17 @@ fun HomeScreen(
         WellnessItem("Relaciones sociales", "Tu interacción social.", R.raw.social, "RELATIONSHIPS")
     )
 
-    if (showMoodDialog) {
-        MoodSelectionDialog(onMoodSelected, onDismissMoodDialog)
-    }
+    // Animación de pulso para el botón del diario
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
 
     Scaffold(
         bottomBar = {
@@ -114,7 +127,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                         Text(
                             "Hola, $userName 👋", 
                             fontSize = 24.sp, 
@@ -122,25 +135,80 @@ fun HomeScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            "¿Cómo te sientes hoy?", 
+                            "Bienvenido de nuevo", 
                             fontSize = 16.sp, 
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .size(45.dp)
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
-                            .clickable { onNavigateToMoodJournal() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("📔", fontSize = 20.sp)
+                    
+                    // Botón de Diario con señalización (animación de pulso)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box(
+                            modifier = Modifier
+                                .size(54.dp)
+                                .scale(scale)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), CircleShape)
+                                .clickable { onNavigateToMoodJournal() },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("📔", fontSize = 26.sp)
+                        }
+                        Text(
+                            "Mi Diario", 
+                            fontSize = 11.sp, 
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
                     }
                 }
-                Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(24.dp))
             }
 
-            // EVALUACIONES (Arriba)
+            // SECCIÓN MINDFULNESS
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToBreathing() },
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                    ),
+                    elevation = CardDefaults.cardElevation(0.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .background(MaterialTheme.colorScheme.primary, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Spa, null, tint = Color.White)
+                        }
+                        Spacer(Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                "Respiración Guiada", 
+                                fontWeight = FontWeight.Bold, 
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                fontSize = 16.sp
+                            )
+                            Text(
+                                "Tómate un momento para calmarte.", 
+                                fontSize = 12.sp, 
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(24.dp))
+            }
+
+            // EVALUACIONES
             item {
                 Text(
                     "Evaluaciones de bienestar", 
@@ -156,7 +224,7 @@ fun HomeScreen(
                 Spacer(Modifier.height(12.dp))
             }
 
-            // ESPECIALISTAS (Debajo)
+            // ESPECIALISTAS
             item {
                 Spacer(Modifier.height(24.dp))
                 Text(
@@ -239,8 +307,8 @@ fun PsychologistCard(psych: Psychologist, onClick: (Psychologist) -> Unit) {
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            AsyncImage(
-                model = "http://10.0.2.2:8080/uploads/${psych.photo}",
+            Base64Image(
+                base64String = psych.photo,
                 contentDescription = null,
                 modifier = Modifier
                     .size(80.dp)
@@ -263,59 +331,6 @@ fun PsychologistCard(psych: Psychologist, onClick: (Psychologist) -> Unit) {
                 color = MaterialTheme.colorScheme.primary, 
                 maxLines = 1
             )
-        }
-    }
-}
-
-@Composable
-fun MoodSelectionDialog(onMoodSelected: (String) -> Unit, onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
-        Card(
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    "¿Cómo te sientes hoy?",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(Modifier.height(24.dp))
-                
-                val moods = listOf(
-                    "EXCELENTE" to "🤩",
-                    "BIEN" to "😊",
-                    "NORMAL" to "😐",
-                    "TRISTE" to "😔",
-                    "MUY_MAL" to "😫"
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    moods.forEach { (name, emoji) ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.clickable { onMoodSelected(name) }
-                        ) {
-                            Text(emoji, fontSize = 32.sp)
-                        }
-                    }
-                }
-                Spacer(Modifier.height(24.dp))
-                TextButton(onClick = onDismiss) {
-                    Text("Más tarde", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
         }
     }
 }

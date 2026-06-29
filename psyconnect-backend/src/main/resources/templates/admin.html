@@ -1,83 +1,142 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>PsyConnect Admin</title>
+    <title>PsyConnect - Panel Administrativo</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
+<body class="bg-light">
 
-<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/admin">
+            <i class="bi bi-heart-pulse-fill"></i> PsyConnect Admin
+        </a>
+    </div>
+</nav>
 
-<h1>Agregar Psicólogo</h1>
+<div class="container mb-5">
+    
+    <!-- Formularios (Crear/Editar) -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0" th:text="${psychologist.id == null ? '➕ Agregar Nuevo Psicólogo' : '✏️ Editar Psicólogo'}"></h5>
+        </div>
+        <div class="card-body">
+            <form action="/admin/save" method="post" enctype="multipart/form-data" th:object="${psychologist}">
+                
+                <input type="hidden" th:field="*{id}">
+                <!-- Si estamos editando y no subimos foto nueva, mantenemos la anterior -->
+                <input type="hidden" th:field="*{photo}" th:if="${psychologist.id != null}">
 
-<form
-        action="/admin/save"
-        method="post"
-        enctype="multipart/form-data">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nombre Completo</label>
+                        <input type="text" class="form-control" th:field="*{name}" required placeholder="Ej. Dra. Ana Gómez">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Especialidad</label>
+                        <input type="text" class="form-control" th:field="*{specialty}" required placeholder="Psicología Clínica">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">WhatsApp (Opcional)</label>
+                        <input type="text" class="form-control" th:field="*{phone}" placeholder="+505 8888 8888">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Ciudad</label>
+                        <input type="text" class="form-control" th:field="*{city}" required placeholder="Managua">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Correo Electrónico</label>
+                        <input type="email" class="form-control" th:field="*{email}" placeholder="correo@ejemplo.com">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">
+                            Foto de Perfil <span th:if="${psychologist.id != null}" class="text-muted fw-normal">(Dejar en blanco para mantener la actual)</span>
+                        </label>
+                        <input class="form-control" type="file" name="photoFile" accept="image/*" th:required="${psychologist.id == null}">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Descripción Profesional</label>
+                        <textarea class="form-control" th:field="*{description}" rows="4" placeholder="Breve biografía profesional..."></textarea>
+                    </div>
+                </div>
 
-    <p>
-        Nombre:
-        <input
-                type="text"
-                name="name"
-                required>
-    </p>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Guardar
+                    </button>
+                    <a href="/admin" class="btn btn-outline-secondary" th:if="${psychologist.id != null}">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    <p>
-        Especialidad:
-        <input
-                type="text"
-                name="specialty"
-                required>
-    </p>
+    <!-- Lista de Psicólogos -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">📋 Lista de Especialistas</h5>
+            <span class="badge bg-primary rounded-pill" th:text="${#lists.size(psychologists)}">0</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-nowrap align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Foto</th>
+                        <th>Nombre</th>
+                        <th>Especialidad</th>
+                        <th>Ciudad</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(psychologists)}">
+                        <td colspan="5" class="text-center py-4 text-muted">No hay psicólogos registrados.</td>
+                    </tr>
+                    <tr th:each="psych : ${psychologists}">
+                        <td class="ps-4">
+                            <!-- Render Base64 Image -->
+                            <img th:if="${psych.photo != null and !psych.photo.isEmpty()}" 
+                                 th:src="@{'data:image/jpeg;base64,' + ${psych.photo}}" 
+                                 class="rounded-circle object-fit-cover shadow-sm" 
+                                 width="48" height="48" alt="Foto">
+                            
+                            <div th:unless="${psych.photo != null and !psych.photo.isEmpty()}" 
+                                 class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center shadow-sm" 
+                                 style="width: 48px; height: 48px;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold" th:text="${psych.name}">Nombre</div>
+                            <div class="text-muted small" th:text="${psych.email}">correo@ejemplo.com</div>
+                        </td>
+                        <td><span class="badge bg-info text-dark" th:text="${psych.specialty}">Especialidad</span></td>
+                        <td th:text="${psych.city}">Ciudad</td>
+                        <td class="text-end pe-4">
+                            <a th:href="@{'/admin/edit/' + ${psych.id}}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a th:href="@{'/admin/delete/' + ${psych.id}}" class="btn btn-sm btn-outline-danger ms-1" title="Eliminar"
+                               onclick="return confirm('¿Estás seguro de que deseas eliminar este registro?');">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-    <p>
-        WhatsApp:
-        <input
-                type="text"
-                name="phone"
-                required>
-    </p>
-
-    <p>
-        Ciudad:
-        <input
-                type="text"
-                name="city"
-                required>
-    </p>
-
-    <p>
-        Correo:
-        <input
-                type="email"
-                name="email">
-    </p>
-
-    <p>
-        Foto:
-        <input
-                type="file"
-                name="photoFile"
-                accept="image/*">
-    </p>
-
-    <p>
-        Descripción:
-    </p>
-
-    <textarea
-            rows="6"
-            cols="40"
-            name="description"></textarea>
-
-    <br><br>
-
-    <button type="submit">
-        Guardar
-    </button>
-
-</form>
-
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -62,9 +62,12 @@ public class MoodController {
     public List<Mood> getMoodHistory(
             @PathVariable Long userId
     ) {
-        return moodService
-                .getMoodHistory(
-                        userId
-                );
+        return moodService.getMoodHistory(userId);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMood(@PathVariable Long id) {
+        moodService.deleteMood(id);
+        return ResponseEntity.noContent().build();
     }
 }

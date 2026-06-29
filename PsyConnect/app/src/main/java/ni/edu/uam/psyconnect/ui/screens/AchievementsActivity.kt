@@ -27,14 +27,13 @@ class AchievementsActivity : ComponentActivity() {
 
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
         val userId = sharedPreferences.getLong("userId", -1L)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
 
         if (userId != -1L) {
             viewModel.setUserId(userId)
         }
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 AchievementScreen(
                     viewModel = viewModel,
                     onBack = { finish() }

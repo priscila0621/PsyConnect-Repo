@@ -7,13 +7,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import ni.edu.uam.psyconnect.ui.screens.Home
 import ni.edu.uam.psyconnect.ui.screens.Login
 import ni.edu.uam.psyconnect.ui.screens.OnboardingActivity
+import ni.edu.uam.psyconnect.ui.theme.ThemeSettings
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val prefs = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        
-        // Aplicar modo oscuro antes del super.onCreate
+
+        // Cargar y aplicar modo oscuro globalmente
         val darkMode = prefs.getBoolean("darkMode", false)
+        ThemeSettings.isDarkMode = darkMode
+
         if (darkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {

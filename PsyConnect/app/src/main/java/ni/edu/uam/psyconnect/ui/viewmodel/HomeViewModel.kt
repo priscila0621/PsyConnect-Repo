@@ -31,11 +31,13 @@ class HomeViewModel : ViewModel() {
                     _userName.value = response.body()?.name ?: "Usuario"
                 }
                 
-                // Verificar si ya puso su mood hoy
+                // Desactivado el diálogo automático para no molestar al usuario
+                /*
                 val moodResponse = RetrofitClient.apiService.hasMoodToday(userId)
                 if (moodResponse.isSuccessful && moodResponse.body() == false) {
                     _showMoodDialog.value = true
                 }
+                */
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -58,7 +60,17 @@ class HomeViewModel : ViewModel() {
     fun saveMood(userId: Long, moodName: String) {
         viewModelScope.launch {
             try {
-                RetrofitClient.apiService.saveMood(Mood(userId = userId, mood = moodName))
+                val dateStr = java.text.SimpleDateFormat("EEEE, d MMMM", java.util.Locale("es")).format(java.util.Date()).replaceFirstChar { it.uppercase() }
+                RetrofitClient.apiService.saveMood(
+                    ni.edu.uam.psyconnect.data.moodjournal.MoodJournalEntry(
+                        userId = userId,
+                        mood = moodName,
+                        reflection = "",
+                        date = dateStr,
+                        timestamp = System.currentTimeMillis(),
+                        activities = ""
+                    )
+                )
                 _showMoodDialog.value = false
             } catch (e: Exception) {
                 e.printStackTrace()

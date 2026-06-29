@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import ni.edu.uam.psyconnect.ui.theme.PsyConnectTheme
 
 class OnboardingActivity : ComponentActivity() {
 
@@ -21,13 +22,15 @@ class OnboardingActivity : ComponentActivity() {
         }
 
         setContent {
-            OnboardingScreen(
-                onFinished = {
-                    prefs.edit().putBoolean("onboarding_completed", true).apply()
-                    startActivity(Intent(this, Login::class.java))
-                    finish()
-                }
-            )
+            PsyConnectTheme {
+                OnboardingScreen(
+                    onFinished = {
+                        prefs.edit().putBoolean("onboarding_completed", true).apply()
+                        startActivity(Intent(this, Login::class.java))
+                        finish()
+                    }
+                )
+            }
         }
     }
 }

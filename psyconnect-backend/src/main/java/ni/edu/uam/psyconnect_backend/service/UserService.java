@@ -148,6 +148,10 @@ public class UserService {
                 updatedUser.getDescription()
         );
 
+        user.setProfileImage(
+                updatedUser.getProfileImage()
+        );
+
         return userRepository.save(
                 user
         );

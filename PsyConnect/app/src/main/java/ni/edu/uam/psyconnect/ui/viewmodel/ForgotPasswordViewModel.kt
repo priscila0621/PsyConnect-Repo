@@ -26,6 +26,41 @@ class ForgotPasswordViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(code = code)
     }
 
+    fun loadUserEmail(userId: Long) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                val response = RetrofitClient.apiService.getUserById(userId)
+                if (response.isSuccessful) {
+                    val email = response.body()?.email ?: ""
+                    _uiState.value = _uiState.value.copy(
+                        email = email,
+                        maskedEmail = maskEmail(email),
+                        isDirectMode = true,
+                        isLoading = false
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(isLoading = false, error = "No se pudo cargar el correo del usuario")
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false, error = "Error de conexión")
+            }
+        }
+    }
+
+    private fun maskEmail(email: String): String {
+        if (!email.contains("@")) return email
+        val parts = email.split("@")
+        val name = parts[0]
+        val domain = parts[1]
+        
+        return if (name.length > 2) {
+            name.substring(0, 2) + "***" + name.substring(name.length - 1) + "@" + domain
+        } else {
+            "***@" + domain
+        }
+    }
+
     fun sendRecoveryCode() {
         val email = _uiState.value.email
         if (email.isBlank()) return
@@ -33,14 +68,16 @@ class ForgotPasswordViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                // Verificar si el correo existe
-                val existsResponse = RetrofitClient.apiService.existsEmail(email)
-                if (existsResponse.body() != true) {
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = "No existe ninguna cuenta asociada a este correo"
-                    )
-                    return@launch
+                // Verificar si el correo existe (solo si no es direct mode, por seguridad)
+                if (!_uiState.value.isDirectMode) {
+                    val existsResponse = RetrofitClient.apiService.existsEmail(email)
+                    if (existsResponse.body() != true) {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = "No existe ninguna cuenta asociada a este correo"
+                        )
+                        return@launch
+                    }
                 }
 
                 // Enviar el código
@@ -50,7 +87,7 @@ class ForgotPasswordViewModel : ViewModel() {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isCodeSent = true,
-                        message = "Se ha enviado un código de verificación al correo ingresado."
+                        message = "Se ha enviado un código de verificación."
                     )
                 } else {
                     _uiState.value = _uiState.value.copy(isLoading = false, error = "No se pudo enviar el código")
@@ -111,6 +148,8 @@ class ForgotPasswordViewModel : ViewModel() {
 
 data class ForgotPasswordUiState(
     val email: String = "",
+    val maskedEmail: String = "",
+    val isDirectMode: Boolean = false, // True si ya sabemos qué correo es (desde configuración)
     val code: String = "",
     val isLoading: Boolean = false,
     val isCodeSent: Boolean = false,

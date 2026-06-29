@@ -12,7 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import ni.edu.uam.psyconnect.data.model.User
 import ni.edu.uam.psyconnect.ui.theme.*
+import ni.edu.uam.psyconnect.ui.components.Base64Image
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +40,31 @@ fun ProfileScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToHistory: () -> Unit
 ) {
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("Cerrar Sesión", fontWeight = FontWeight.Bold) },
+            text = { Text("¿Estás seguro de que deseas cerrar tu sesión en PsyConnect?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLogoutDialog = false
+                    onLogout()
+                }) {
+                    Text("Cerrar Sesión", color = Color.Red, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("Cancelar")
+                }
+            },
+            shape = RoundedCornerShape(28.dp),
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    }
+
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -100,23 +126,35 @@ fun ProfileScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        val photoUrl = if (user?.profileImage?.startsWith("http") == true) {
-                            user.profileImage
+                        if (!user?.profileImage.isNullOrEmpty()) {
+                            Base64Image(
+                                base64String = user?.profileImage,
+                                contentDescription = "Foto de perfil",
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                    .padding(4.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
                         } else {
-                            "http://10.0.2.2:8080/uploads/${user?.profileImage}"
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surface),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Person,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(60.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
 
-                        AsyncImage(
-                            model = photoUrl,
-                            contentDescription = "Foto de perfil",
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surface, CircleShape)
-                                .padding(4.dp)
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
                         Spacer(Modifier.height(12.dp))
                         Text(
                             text = user?.name ?: "Cargando...",
@@ -189,7 +227,7 @@ fun ProfileScreen(
                     Spacer(Modifier.height(8.dp))
                     
                     Button(
-                        onClick = onLogout,
+                        onClick = { showLogoutDialog = true },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isSystemInDarkTheme()) Color(0xFF442222) else Color(0xFFFFEBEE)

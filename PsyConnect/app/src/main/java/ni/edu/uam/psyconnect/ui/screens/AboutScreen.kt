@@ -76,7 +76,7 @@ fun AboutScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        painter = painterResource(id = R.drawable.psyconnect_logo),
                         contentDescription = "PsyConnect Logo",
                         modifier = Modifier.fillMaxSize()
                     )
@@ -149,15 +149,16 @@ fun AboutScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         
-                        CreatorItem("Francella Pérez")
-                        CreatorItem("Allison Pavón")
+                        CreatorItem("Jeyni Orozco")
+                        CreatorItem("Priscila Selva")
+                        CreatorItem("Emma Serrano")
                     }
                 }
             }
 
             item {
                 Text(
-                    text = "© 2024 PsyConnect Team\nUniversidad Americana (UAM)",
+                    text = "© 2026 PsyConnect Team\nUniversidad Americana (UAM)",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                     textAlign = TextAlign.Center,

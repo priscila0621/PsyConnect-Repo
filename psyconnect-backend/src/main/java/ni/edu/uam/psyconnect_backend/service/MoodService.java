@@ -22,12 +22,16 @@ public class MoodService {
             Mood mood
     ) {
 
+        if (mood.getId() != null && mood.getId() == 0L) {
+            mood.setId(null);
+        }
+
         if (
                 mood.getDate() == null
         ) {
 
             mood.setDate(
-                    LocalDate.now()
+                    LocalDate.now().toString()
             );
         }
 
@@ -41,17 +45,15 @@ public class MoodService {
     ) {
         return moodRepository.findByUserIdAndDate(
                 userId,
-                LocalDate.now()
+                LocalDate.now().toString()
         );
     }
 
-    public List<Mood> getMoodHistory(
-            Long userId
-    ) {
-        return moodRepository
-                .findAllByUserIdOrderByDateAsc(
-                        userId
-                );
+    public List<Mood> getMoodHistory(Long userId) {
+        return moodRepository.findAllByUserIdOrderByDateAsc(userId);
     }
 
+    public void deleteMood(Long id) {
+        moodRepository.deleteById(id);
+    }
 }

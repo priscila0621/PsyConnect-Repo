@@ -2,79 +2,60 @@ package ni.edu.uam.psyconnect_backend.controller;
 
 import ni.edu.uam.psyconnect_backend.model.Psychologist;
 import ni.edu.uam.psyconnect_backend.service.PsychologistService;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private final PsychologistService service;
 
-    public AdminController(
-            PsychologistService service
-    ) {
+    public AdminController(PsychologistService service) {
         this.service = service;
     }
 
-    @GetMapping("/admin")
-    public String adminPage() {
-
+    @GetMapping
+    public String adminPage(Model model) {
+        model.addAttribute("psychologists", service.getAll());
+        model.addAttribute("psychologist", new Psychologist());
         return "admin";
     }
 
-    @PostMapping("/admin/save")
+    @PostMapping("/save")
     public String savePsychologist(
-
-            Psychologist psychologist,
-
-            @RequestParam("photoFile")
-            MultipartFile photoFile
-
+            @ModelAttribute Psychologist psychologist,
+            @RequestParam("photoFile") MultipartFile photoFile
     ) {
-
         try {
-
-            String fileName =
-                    photoFile.getOriginalFilename();
-
-            Path uploadPath =
-                    Paths.get("uploads");
-
-            if (!Files.exists(uploadPath)) {
-
-                Files.createDirectories(
-                        uploadPath
-                );
+            if (photoFile != null && !photoFile.isEmpty()) {
+                String base64Image = Base64.getEncoder().encodeToString(photoFile.getBytes());
+                psychologist.setPhoto(base64Image);
             }
-
-            Files.copy(
-                    photoFile.getInputStream(),
-                    uploadPath.resolve(fileName),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            psychologist.setPhoto(
-                    fileName
-            );
-
-            service.save(
-                    psychologist
-            );
-
+            service.save(psychologist);
         } catch (Exception e) {
-
             e.printStackTrace();
         }
+        return "redirect:/admin";
+    }
 
+    @GetMapping("/edit/{id}")
+    public String editPsychologist(@PathVariable Long id, Model model) {
+        Psychologist psychologist = service.findById(id);
+        if (psychologist != null) {
+            model.addAttribute("psychologists", service.getAll());
+            model.addAttribute("psychologist", psychologist);
+            return "admin";
+        }
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deletePsychologist(@PathVariable Long id) {
+        service.deleteById(id);
         return "redirect:/admin";
     }
 }

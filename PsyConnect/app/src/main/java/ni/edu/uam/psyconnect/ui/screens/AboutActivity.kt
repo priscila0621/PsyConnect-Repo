@@ -10,11 +10,8 @@ class AboutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 AboutScreen(
                     onBack = { finish() }
                 )

@@ -21,11 +21,8 @@ class DetailPsychologist : ComponentActivity() {
         val description = intent.getStringExtra("description") ?: ""
         val photo = intent.getStringExtra("photo") ?: ""
 
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 DetailPsychologistScreen(
                     name = name,
                     specialty = specialty,

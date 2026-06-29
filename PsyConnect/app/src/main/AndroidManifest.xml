@@ -17,6 +17,7 @@
 
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"/>
 
         <activity
@@ -29,28 +30,30 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.screens.Login" />
-        <activity android:name=".ui.screens.Register" />
+        <activity android:name=".ui.screens.Login" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.screens.Register" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.screens.Home" />
         <activity android:name=".ui.screens.TestCategoryActivity" />
         <activity android:name=".ui.screens.DynamicTestActivity" />
         <activity android:name=".ui.screens.Results" />
         <activity android:name=".ui.screens.History" />
         <activity android:name=".ui.screens.Profile" />
-        <activity android:name=".ui.screens.EditProfile" />
-        <activity android:name=".ui.screens.ChangePassword" />
+        <activity android:name=".ui.screens.EditProfile" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.screens.ChangePassword" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.screens.DetailPsychologist"/>
-        <activity android:name=".ui.screens.ResetPassword" />
-        <activity android:name=".ui.screens.ForgotPassword" />
+        <activity android:name=".ui.screens.ResetPassword" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.screens.ForgotPassword" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.screens.SettingsActivity"/>
         <activity android:name=".ui.screens.AppearanceActivity"/>
         <activity android:name=".ui.screens.AboutActivity"/>
-        <activity android:name=".ui.screens.ChangeEmail" />
+        <activity android:name=".ui.screens.ChangeEmail" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.screens.SecurityActivity" />
         <activity android:name=".ui.screens.MoodHistoryActivity" />
         <activity android:name=".ui.screens.AchievementsActivity" />
         <activity android:name=".ui.screens.ResultDetailActivity"/>
-        <activity android:name=".ui.screens.MoodJournalActivity" />
+        <activity android:name=".ui.screens.MoodJournalActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.screens.CompleteProfileActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.screens.BreathingActivity" />
     </application>
 
 </manifest>

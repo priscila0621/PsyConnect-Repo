@@ -11,11 +11,8 @@ class TestCategoryActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 TestCategoryScreen(
                     onCategoryClick = { category ->
                         val intent = Intent(this, DynamicTestActivity::class.java).apply {

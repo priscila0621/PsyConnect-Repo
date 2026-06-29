@@ -11,11 +11,8 @@ class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 SettingsScreen(
                     onAppearanceClick = {
                         startActivity(Intent(this, AppearanceActivity::class.java))

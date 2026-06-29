@@ -17,13 +17,9 @@ class Register : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val viewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
 
         setContent {
-            // Escuchar modo oscuro
-            val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
-
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val state by viewModel.uiState.collectAsState()
 
                 // Manejo de eventos (Navegación y Errores)

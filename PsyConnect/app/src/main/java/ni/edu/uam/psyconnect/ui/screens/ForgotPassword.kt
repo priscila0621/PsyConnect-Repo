@@ -18,16 +18,18 @@ class ForgotPassword : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val viewModel = ViewModelProvider(this)[ForgotPasswordViewModel::class.java]
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
         
+        val userId = intent.getLongExtra("userId", -1L)
         val emailRecibido = intent.getStringExtra("email")
-        if (!emailRecibido.isNullOrBlank()) {
+
+        if (userId != -1L) {
+            viewModel.loadUserEmail(userId)
+        } else if (!emailRecibido.isNullOrBlank()) {
             viewModel.onEmailChange(emailRecibido)
         }
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val state by viewModel.uiState.collectAsState()
 
                 LaunchedEffect(state.isCodeVerified) {

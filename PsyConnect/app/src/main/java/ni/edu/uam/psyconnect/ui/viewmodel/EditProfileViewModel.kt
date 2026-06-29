@@ -85,9 +85,28 @@ class EditProfileViewModel : ViewModel() {
         validateForm()
     }
 
-    fun onImageChange(newUri: String) {
-        _uiState.value = _uiState.value.copy(profileImage = newUri)
-        validateForm()
+    fun onImageSelected(uri: android.net.Uri, context: android.content.Context) {
+        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                // Compress image before Base64 encoding to prevent huge payloads
+                val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                
+                if (bitmap != null) {
+                    val outputStream = java.io.ByteArrayOutputStream()
+                    // Compress to JPEG 70%
+                    bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, outputStream)
+                    val bytes = outputStream.toByteArray()
+                    
+                    val base64 = android.util.Base64.encodeToString(bytes, android.util.Base64.DEFAULT)
+                    _uiState.value = _uiState.value.copy(profileImage = base64)
+                    validateForm()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun validateForm() {

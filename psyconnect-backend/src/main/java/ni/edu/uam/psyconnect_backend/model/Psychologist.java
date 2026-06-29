@@ -23,6 +23,7 @@ public class Psychologist {
     @Column(length = 2000)
     private String description;
 
+    @Column(columnDefinition = "TEXT")
     private String photo;
 
     public Psychologist() {
@@ -50,6 +51,10 @@ public class Psychologist {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -34,10 +34,9 @@ class DynamicTestActivity : ComponentActivity() {
 
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
         val userId = sharedPreferences.getLong("userId", 1L)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val state by viewModel.uiState.collectAsState()
 
                 DynamicTestScreen(

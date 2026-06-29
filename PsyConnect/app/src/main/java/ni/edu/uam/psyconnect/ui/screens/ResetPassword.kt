@@ -17,8 +17,6 @@ class ResetPassword : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val viewModel = ViewModelProvider(this)[ResetPasswordViewModel::class.java]
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
         
         val email = intent.getStringExtra("email") ?: ""
 
@@ -29,7 +27,7 @@ class ResetPassword : ComponentActivity() {
         }
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val state by viewModel.uiState.collectAsState()
 
                 LaunchedEffect(state.isSuccess) {

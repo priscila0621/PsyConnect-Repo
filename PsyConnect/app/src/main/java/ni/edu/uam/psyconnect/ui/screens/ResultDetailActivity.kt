@@ -3,6 +3,7 @@ package ni.edu.uam.psyconnect.ui.screens
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import ni.edu.uam.psyconnect.ui.theme.PsyConnectTheme
 
 class ResultDetailActivity : ComponentActivity() {
 
@@ -16,13 +17,15 @@ class ResultDetailActivity : ComponentActivity() {
         val date = intent.getStringExtra("date") ?: "-"
 
         setContent {
-            ResultDetailScreen(
-                category = category,
-                percentage = percentage,
-                trend = trend,
-                date = date,
-                onBack = { finish() }
-            )
+            PsyConnectTheme {
+                ResultDetailScreen(
+                    category = category,
+                    percentage = percentage,
+                    trend = trend,
+                    date = date,
+                    onBack = { finish() }
+                )
+            }
         }
     }
 }

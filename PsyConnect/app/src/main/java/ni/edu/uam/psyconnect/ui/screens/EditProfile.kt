@@ -21,12 +21,11 @@ class EditProfile : ComponentActivity() {
         
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
         val userId = sharedPreferences.getLong("userId", -1L)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
 
         viewModel.loadUserData(userId)
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 val state by viewModel.uiState.collectAsState()
 
                 // Manejo de efectos secundarios
@@ -51,7 +50,7 @@ class EditProfile : ComponentActivity() {
                     onUsernameChange = viewModel::onUsernameChange,
                     onDescriptionChange = viewModel::onDescriptionChange,
                     onBirthdateChange = viewModel::onBirthdateChange,
-                    onImageChange = viewModel::onImageChange,
+                    onImageSelected = viewModel::onImageSelected,
                     onSave = { viewModel.saveChanges(userId) },
                     onBack = { finish() }
                 )

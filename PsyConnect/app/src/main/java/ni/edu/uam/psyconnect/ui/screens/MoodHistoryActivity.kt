@@ -1,5 +1,6 @@
 package ni.edu.uam.psyconnect.ui.screens
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,11 +26,16 @@ class MoodHistoryActivity : ComponentActivity() {
             }
         })[MoodHistoryViewModel::class.java]
 
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
+        // Obtener el ID del usuario actual de SharedPreferences
+        val sharedPreferences = getSharedPreferences("psyconnect", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getLong("userId", -1L)
+        
+        if (userId != -1L) {
+            viewModel.setUserId(userId)
+        }
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 MoodHistoryScreen(
                     viewModel = viewModel,
                     onBack = { finish() }

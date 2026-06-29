@@ -212,7 +212,7 @@ fun MoodHistoryItem(entry: MoodJournalEntry) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = entry.reflection.ifEmpty { "Sin reflexión guardada" },
+                    text = (entry.reflection ?: "").ifEmpty { "Sin reflexión guardada" },
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary,

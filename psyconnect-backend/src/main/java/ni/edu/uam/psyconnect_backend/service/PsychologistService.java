@@ -26,4 +26,12 @@ public class PsychologistService {
     ) {
         return repository.save(psychologist);
     }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
+
+    public Psychologist findById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
 }

@@ -22,6 +22,7 @@ public class User {
 
     private LocalDate birthdate;
 
+    @Column(columnDefinition = "TEXT")
     private String profileImage;
 
     @Column(length = 500)

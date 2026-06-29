@@ -25,6 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import ni.edu.uam.psyconnect.ui.viewmodel.EditProfileUiState
+import ni.edu.uam.psyconnect.ui.components.Base64Image
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,29 +40,43 @@ fun EditProfileScreen(
     onUsernameChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onBirthdateChange: (String) -> Unit,
-    onImageChange: (String) -> Unit,
+    onImageSelected: (Uri, android.content.Context) -> Unit,
     onSave: () -> Unit,
     onBack: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     val showDatePicker = remember { mutableStateOf(false) }
     val imageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let { onImageChange(it.toString()) }
+        uri?.let { onImageSelected(it, context) }
     }
 
     if (showDatePicker.value) {
-        val datePickerState = rememberDatePickerState()
+        val datePickerState = rememberDatePickerState(
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    val calendar = Calendar.getInstance()
+                    calendar.add(Calendar.YEAR, -10)
+                    return utcTimeMillis <= calendar.timeInMillis
+                }
+            }
+        )
+
         DatePickerDialog(
             onDismissRequest = { showDatePicker.value = false },
             confirmButton = {
                 TextButton(onClick = {
                     datePickerState.selectedDateMillis?.let {
-                        val date = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(it))
+                        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        sdf.timeZone = TimeZone.getTimeZone("UTC")
+                        val date = sdf.format(Date(it))
                         onBirthdateChange(date)
                     }
                     showDatePicker.value = false
-                }) { Text("Confirmar") }
+                }) {
+                    Text("Confirmar")
+                }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -102,18 +122,50 @@ fun EditProfileScreen(
             // Foto de Perfil
             item {
                 Box(contentAlignment = Alignment.BottomEnd) {
-                    AsyncImage(
-                        model = state.profileImage,
-                        contentDescription = "Foto de perfil",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface, CircleShape)
-                            .padding(4.dp)
-                            .clip(CircleShape)
-                            .clickable { imageLauncher.launch("image/*") },
-                        contentScale = ContentScale.Crop
-                    )
+                    if (state.profileImage?.startsWith("content://") == true) {
+                        AsyncImage(
+                            model = state.profileImage,
+                            contentDescription = "Foto de perfil",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                .padding(4.dp)
+                                .clip(CircleShape)
+                                .clickable { imageLauncher.launch("image/*") },
+                            contentScale = ContentScale.Crop
+                        )
+                    } else if (!state.profileImage.isNullOrEmpty()) {
+                        Base64Image(
+                            base64String = state.profileImage,
+                            contentDescription = "Foto de perfil",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                .padding(4.dp)
+                                .clip(CircleShape)
+                                .clickable { imageLauncher.launch("image/*") },
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+                                .clickable { imageLauncher.launch("image/*") },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Default.Person,
+                                contentDescription = null,
+                                modifier = Modifier.size(70.dp),
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+
                     Box(
                         modifier = Modifier
                             .size(36.dp)

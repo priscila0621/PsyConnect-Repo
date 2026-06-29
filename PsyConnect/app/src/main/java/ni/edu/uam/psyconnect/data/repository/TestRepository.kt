@@ -153,7 +153,7 @@ object TestRepository {
                 ),
 
                 Question(
-                    "Rara vez me despierto durante la noche.",
+                    "Me despierto durante la noche.",
                     defaultOptions
                 ),
 

@@ -1,5 +1,7 @@
 package ni.edu.uam.psyconnect.ui.screens
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,14 +27,36 @@ class MoodJournalActivity : ComponentActivity() {
             }
         })[MoodJournalViewModel::class.java]
 
-        val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
+        // Obtener el ID del usuario actual de SharedPreferences
+        val sharedPreferences = getSharedPreferences("psyconnect", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getLong("userId", -1L)
+        
+        if (userId != -1L) {
+            viewModel.setUserId(userId)
+        }
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 MoodJournalScreen(
                     viewModel = viewModel,
-                    onBack = { finish() }
+                    userId = userId,
+                    onBack = { finish() },
+                    onNavigateToHome = {
+                        val intent = Intent(this, Home::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                        startActivity(intent)
+                        finish()
+                    },
+                    onNavigateToHistory = {
+                        val intent = Intent(this, History::class.java)
+                        startActivity(intent)
+                        finish()
+                    },
+                    onNavigateToProfile = {
+                        val intent = Intent(this, Profile::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 )
             }
         }

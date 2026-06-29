@@ -15,6 +15,9 @@ interface MoodJournalDao {
     @Delete
     suspend fun delete(entry: MoodJournalEntry)
 
+    @Query("SELECT * FROM mood_journal WHERE userId = :userId ORDER BY timestamp DESC")
+    fun getEntriesByUser(userId: Long): Flow<List<MoodJournalEntry>>
+
     @Query("SELECT * FROM mood_journal ORDER BY timestamp DESC")
     fun getAllEntries(): Flow<List<MoodJournalEntry>>
 }

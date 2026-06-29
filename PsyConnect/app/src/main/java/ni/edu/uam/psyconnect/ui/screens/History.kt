@@ -1,5 +1,6 @@
 package ni.edu.uam.psyconnect.ui.screens
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,15 +28,25 @@ class History : ComponentActivity() {
 
         val sharedPreferences = getSharedPreferences("psyconnect", MODE_PRIVATE)
         val userId = sharedPreferences.getLong("userId", 1L)
-        val isDarkMode = sharedPreferences.getBoolean("darkMode", false)
         
         viewModel.setUserId(userId)
 
         setContent {
-            PsyConnectTheme(darkTheme = isDarkMode) {
+            PsyConnectTheme {
                 HistoryScreen(
                     viewModel = viewModel,
-                    onBack = { finish() }
+                    onBack = { finish() },
+                    onNavigateToHome = {
+                        val intent = Intent(this, Home::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                        startActivity(intent)
+                        finish()
+                    },
+                    onNavigateToProfile = {
+                        val intent = Intent(this, Profile::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 )
             }
         }

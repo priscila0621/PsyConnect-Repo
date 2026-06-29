@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ni.edu.uam.psyconnect.R
 import ni.edu.uam.psyconnect.ui.theme.*
+import androidx.compose.foundation.layout.imePadding
 
 @Composable
 fun LoginScreen(
@@ -44,6 +45,8 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .imePadding()
+            .navigationBarsPadding()
             .padding(horizontal = 24.dp)
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,22 +61,22 @@ fun LoginScreen(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(R.drawable.psyconnect_logo),
                 contentDescription = "Logo",
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.size(100.dp)
             )
         }
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         Text(
-            text = "Bienvenido de nuevo",
+            text = "Bienvenid@",
             fontSize = 28.sp,
             fontWeight = FontWeight.ExtraBold,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center
         )
-        
+
         Text(
             text = "Inicia sesión para continuar cuidando tu bienestar",
             fontSize = 14.sp,
